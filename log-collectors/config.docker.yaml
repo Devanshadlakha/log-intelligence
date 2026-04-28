@@ -1,0 +1,69 @@
+# Linux/Docker version of config.yaml.
+# Used when log-collectors runs as a container (see docker-compose.yml).
+# Disables Windows-only and host-path-only collectors.
+
+kafka:
+  # Internal listener — reachable from any container on the log-network.
+  bootstrap_servers: "kafka:29092"
+  topic: "app-logs"
+
+collectors:
+  # Tails real log files in real time via watchdog.
+  file_watcher:
+    enabled: true
+    paths:
+      # Docker Desktop's backend log — real Windows process, lots of routine
+      # INFO chatter we don't want; only surface actual problems.
+      - path: "/var/log/docker-host/com.docker.backend.exe.log"
+        service_name: "docker-desktop"
+        min_level: WARN
+      # MariaDB general query log — every SQL query when general log is ON
+      - path: "/var/log/mariadb/general.log"
+        service_name: "mariadb"
+      # MariaDB error log — startup, shutdown, connection failures
+      - path: "/var/log/mariadb/LAPTOP-LL08C4LH.err"
+        service_name: "mariadb-error"
+        min_level: WARN
+      # Optional manual-test file — append lines via `echo ... >> logs/app/myapp.log`
+      - path: "/var/log/app/myapp.log"
+        service_name: "myapp"
+
+  # Disabled — Windows Event Viewer doesn't exist on Linux.
+  windows_event:
+    enabled: false
+
+  # Tails the nginx access log written by the frontend container,
+  # mounted in via the ./logs/nginx-frontend volume.
+  web_server:
+    enabled: true
+    files:
+      - path: "/var/log/nginx-volume/access.log"
+        service_name: "nginx"
+        format: "combined"
+        # Only surface 4xx and 5xx — drops the constant 200 dashboard polling.
+        min_level: WARN
+
+  github_actions:
+    enabled: true
+    repositories:
+      - owner: "Devanshadlakha"
+        repo: "log-intelligence"
+    poll_interval_seconds: 60
+
+  # Disabled — no MariaDB/Postgres on the deployment server by default.
+  # If you point a managed DB at this stack, enable and set log_path.
+  database:
+    enabled: false
+
+  # Streams stdout/stderr from sibling containers via the Docker socket.
+  # Only collect from application containers — Kafka/Zookeeper/ES emit hundreds
+  # of internal INFO lines per minute that are noise, not signal.
+  # min_level filters out routine chatter; set to INFO for full verbosity.
+  docker:
+    enabled: true
+    min_level: WARN
+    containers:
+      - log-backend
+      - log-ai-service
+      - log-frontend
+    labels: {}

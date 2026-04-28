@@ -1,0 +1,57 @@
+kafka:
+  bootstrap_servers: "127.0.0.1:9092"
+  topic: "app-logs"
+
+collectors:
+  file_watcher:
+    enabled: true
+    paths:
+      # Docker Desktop's host log — appended on every container op, UI click, restart.
+      - path: "C:/Users/devad/AppData/Local/Docker/log/host/Docker Desktop.exe.log"
+        service_name: "file-docker-desktop"
+
+  windows_event:
+    enabled: true
+    log_types:
+      - "System"
+      - "Application"
+    poll_interval_seconds: 5
+
+  web_server:
+    enabled: true
+    # Frontend nginx writes its access log to a volume mount on the host.
+    # Real activity = anyone visiting http://localhost — every request logged.
+    files:
+      - path: "C:/Users/devad/OneDrive/Desktop/log-intelligence/logs/nginx-frontend/access.log"
+        service_name: "nginx"
+        format: "combined"
+
+  github_actions:
+    enabled: true
+    repositories:
+      - owner: "Devanshadlakha"
+        repo: "log-intelligence"
+    poll_interval_seconds: 60
+    # GITHUB_TOKEN is read from .env
+
+  database:
+    enabled: true
+    sources:
+      # MariaDB general query log — empty unless you run:
+      #   SET GLOBAL general_log='ON';   (in mysql client, then every query is logged)
+      - type: "mysql"
+        log_path: "C:/Program Files/MariaDB 11.6/data/general.log"
+        service_name: "mariadb"
+      # MariaDB error log — active on connection failures, restarts, warnings.
+      - type: "mysql"
+        log_path: "C:/Program Files/MariaDB 11.6/data/LAPTOP-LL08C4LH.err"
+        service_name: "mariadb-error"
+
+  docker:
+    enabled: true
+    containers:
+      - elasticsearch
+      - kafka
+      - zookeeper
+      - kibana
+    labels: {}

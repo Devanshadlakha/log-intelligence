@@ -1,0 +1,90 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  backend:
+    name: Build Backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Build with Maven
+        working-directory: backend
+        run: mvn clean package -DskipTests
+
+  frontend:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm install
+
+      - name: Build
+        working-directory: frontend
+        run: npm run build
+
+  ai-service:
+    name: Check AI Service
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        working-directory: ai-service
+        run: pip install -r requirements.txt
+
+      - name: Syntax check
+        working-directory: ai-service
+        run: python -m py_compile app.py
+
+  log-collectors:
+    name: Check Log Collectors
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        working-directory: log-collectors
+        run: |
+          pip install -r requirements.txt || true
+
+      - name: Syntax check
+        working-directory: log-collectors
+        run: |
+          python -m py_compile base_collector.py
+          python -m py_compile main.py
+          python -m py_compile collectors/file_watcher.py
+          python -m py_compile collectors/docker_logs.py
+          python -m py_compile collectors/database.py
+          python -m py_compile collectors/github_actions.py
+          python -m py_compile collectors/web_server.py
+          python -m py_compile parsers/common_log_format.py

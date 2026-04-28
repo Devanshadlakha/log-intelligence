@@ -1,0 +1,107 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, sans-serif;
+  background: #10131d;
+  color: #d9e0f5;
+}
+
+/* ── Gradient text ─────────────────────────────────── */
+.text-gradient {
+  background: linear-gradient(135deg, #5171FF, #FF97AD);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Primary gradient button ───────────────────────── */
+.primary-button {
+  background: linear-gradient(135deg, #5171FF, #6C83FF);
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s;
+  font-size: 0.875rem;
+}
+
+.primary-button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.primary-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── Auth button ───────────────────────────────────── */
+.auth-button {
+  background: linear-gradient(135deg, #5171FF, #6C83FF);
+  color: white;
+  font-weight: 600;
+  padding: 0.875rem 2rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  font-size: 1rem;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.auth-button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* ── Card ──────────────────────────────────────────── */
+.card-dark {
+  background: #1e2230;
+  border: 1px solid #2a2f3e;
+  border-radius: 0.75rem;
+}
+
+/* ── Select dropdowns ─────────────────────────────── */
+select option {
+  background: #2a3040;
+  color: #ffffff;
+  padding: 8px 12px;
+}
+
+select option:checked {
+  background: #5171FF;
+  color: #ffffff;
+}
+
+select option:hover {
+  background: #3a4055;
+}
+
+/* ── Scrollbar ─────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #141723;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2a2f3e;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3a3f4e;
+}

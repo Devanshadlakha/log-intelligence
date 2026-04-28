@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+frontend/dist/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+ai-service/venv/
+log-collectors/venv/
+
+# Environment files (contain secrets)
+.env
+ai-service/.env
+log-collectors/.env
+frontend/.env.local
+# frontend/.env and frontend/.env.production hold non-secret URL config
+# (empty in prod → same-origin via nginx). Keep them tracked.
+
+# Java / Maven
+backend/target/
+*.jar
+*.class
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.swp
+
+# Claude Code session files (kept locally only)
+.claude/
+CLAUDE.md
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Elasticsearch data
+es-data/
+
+# Logs (test files)
+*.log
